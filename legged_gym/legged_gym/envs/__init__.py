@@ -28,11 +28,17 @@ from legged_gym.envs.pi.pi_config_ground import PiCfg as PiCfgGround
 from legged_gym.envs.pi.pi_config_ground import PiCfgPPO as PiCfgPPOGround
 from legged_gym.envs.pi.pi_host_ground import LeggedRobot_Pi
 
+# 在其他 import 之后添加（约第 30 行）：
+from legged_gym.envs.z1.z1_config_ground import Z1Cfg as Z1CfgGround
+from legged_gym.envs.z1.z1_config_ground import Z1CfgPPO as Z1CfgPPOGround
+
 task_registry.register( "g1_ground", LeggedRobotGround, G1CfgGround(), G1CfgPPOGround())
 task_registry.register( "g1_platform", LeggedRobotPlatform, G1CfgPlatform(), G1CfgPPOPlatform())
 task_registry.register( "g1_wall", LeggedRobotWall, G1WallCfgWall(), G1WallCfgPPOWall())
 task_registry.register( "g1_slope", LeggedRobotSlope, G1CfgSlope(), G1CfgPPOSlope())
 task_registry.register( "g1_ground_prone", LeggedRobotGroundProne, G1CfgGroundProne(), G1CfgPPOGroundProne())
 task_registry.register( "h1_ground", LeggedRobotGround, H1CfgGround(), H1CfgPPOGround())
-
 task_registry.register( "pi_ground", LeggedRobot_Pi, PiCfgGround(), PiCfgPPOGround())
+
+# 在最后一行（task_registry.register）之后添加：
+task_registry.register( "z1_ground", LeggedRobotGround, Z1CfgGround(), Z1CfgPPOGround())

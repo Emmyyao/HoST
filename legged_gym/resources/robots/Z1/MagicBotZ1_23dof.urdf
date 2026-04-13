@@ -367,7 +367,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -375,15 +375,15 @@
         <mesh
           filename="meshes/left_ankle_roll_link.STL" />
       </geometry>
-    </collision>
-    <!-- <collision>
+    </collision> -->
+    <collision>
       <origin
         xyz="0.0441 0 -0.04476"
         rpy="0 0 0" />
       <geometry>
         <box size="0.21622 0.050 0.02" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint
     name="left_ankle_roll_joint"
@@ -754,7 +754,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -762,15 +762,15 @@
         <mesh
           filename="meshes/right_ankle_roll_link.STL" />
       </geometry>
-    </collision>
-    <!-- <collision>
+    </collision> -->
+    <collision>
         <origin
           xyz="0.0441 0 -0.04476"
           rpy="0 0 0" />
         <geometry>
           <box size="0.21622 0.050 0.02" />
         </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint
     name="right_ankle_roll_joint"
