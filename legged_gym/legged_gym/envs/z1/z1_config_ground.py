@@ -334,3 +334,5 @@ class Z1CfgPPO( LeggedRobotCfgPPO ):
         algorithm_class_name = 'PPO'
         init_at_random_ep_len = True
         max_iterations = 12000 # number of policy updates
+        logger = 'wandb'  # 启用 WandB 日志记录
+        wandb_project = 'HoST_MagicAtom_Z1'  # WandB 项目名称

@@ -40,6 +40,12 @@ from rsl_rl.algorithms import PPO
 from rsl_rl.modules import ActorCritic
 from rsl_rl.env import VecEnv
 
+try:
+    import wandb
+    WANDB_AVAILABLE = True
+except ImportError:
+    WANDB_AVAILABLE = False
+
 
 class OnPolicyRunner:
 
@@ -78,16 +84,38 @@ class OnPolicyRunner:
         # Log
         self.log_dir = log_dir
         self.writer = None
+        self.logger_type = self.cfg.get("logger", "tensorboard")  # default to tensorboard for backward compatibility
+        self.wandb_project = self.cfg.get("wandb_project", None)
+        self.wandb_run = None
         self.tot_timesteps = 0
         self.tot_time = 0
         self.current_learning_iteration = 0
 
         _, _ = self.env.reset()
     
+    def log_scalar(self, name, value, step):
+        """Log a scalar value to the configured logger (TensorBoard or WandB)"""
+        if self.logger_type == 'wandb' and self.wandb_run is not None:
+            wandb.log({name: value}, step=step)
+        elif self.writer is not None:
+            self.writer.add_scalar(name, value, step)
+    
     def learn(self, num_learning_iterations, init_at_random_ep_len=False):
         # initialize writer
-        if self.log_dir is not None and self.writer is None:
-            self.writer = SummaryWriter(log_dir=self.log_dir, flush_secs=10)
+        if self.log_dir is not None and self.writer is None and self.wandb_run is None:
+            if self.logger_type == 'wandb':
+                if WANDB_AVAILABLE:
+                    self.wandb_run = wandb.init(
+                        project=self.wandb_project,
+                        name=os.path.basename(self.log_dir),
+                        config=self.cfg,
+                        sync_tensorboard=False
+                    )
+                else:
+                    print("WARNING: wandb not installed, falling back to tensorboard")
+                    self.writer = SummaryWriter(log_dir=self.log_dir, flush_secs=10)
+            else:
+                self.writer = SummaryWriter(log_dir=self.log_dir, flush_secs=10)
         if init_at_random_ep_len:
             self.env.episode_length_buf = torch.randint_like(self.env.episode_length_buf, high=int(self.env.max_episode_length))
         obs = self.env.get_observations()
@@ -161,23 +189,23 @@ class OnPolicyRunner:
                         ep_info[key] = ep_info[key].unsqueeze(0)
                     infotensor = torch.cat((infotensor, ep_info[key].to(self.device)))
                 value = torch.mean(infotensor)
-                self.writer.add_scalar('Episode/' + key, value, locs['it'])
+                self.log_scalar('Episode/' + key, value, locs['it'])
                 ep_string += f"""{f'Mean episode {key}:':>{pad}} {value:.4f}\n"""
         mean_std = self.alg.actor_critic.std.mean()
         fps = int(self.num_steps_per_env * self.env.num_envs / (locs['collection_time'] + locs['learn_time']))
 
-        self.writer.add_scalar('Loss/value_function', locs['mean_value_loss'], locs['it'])
-        self.writer.add_scalar('Loss/surrogate', locs['mean_surrogate_loss'], locs['it'])
-        self.writer.add_scalar('Loss/learning_rate', self.alg.learning_rate, locs['it'])
-        self.writer.add_scalar('Policy/mean_noise_std', mean_std.item(), locs['it'])
-        self.writer.add_scalar('Perf/total_fps', fps, locs['it'])
-        self.writer.add_scalar('Perf/collection time', locs['collection_time'], locs['it'])
-        self.writer.add_scalar('Perf/learning_time', locs['learn_time'], locs['it'])
+        self.log_scalar('Loss/value_function', locs['mean_value_loss'], locs['it'])
+        self.log_scalar('Loss/surrogate', locs['mean_surrogate_loss'], locs['it'])
+        self.log_scalar('Loss/learning_rate', self.alg.learning_rate, locs['it'])
+        self.log_scalar('Policy/mean_noise_std', mean_std.item(), locs['it'])
+        self.log_scalar('Perf/total_fps', fps, locs['it'])
+        self.log_scalar('Perf/collection time', locs['collection_time'], locs['it'])
+        self.log_scalar('Perf/learning_time', locs['learn_time'], locs['it'])
         if len(locs['rewbuffer']) > 0:
-            self.writer.add_scalar('Train/mean_reward', statistics.mean(locs['rewbuffer']), locs['it'])
-            self.writer.add_scalar('Train/mean_episode_length', statistics.mean(locs['lenbuffer']), locs['it'])
-            self.writer.add_scalar('Train/mean_reward/time', statistics.mean(locs['rewbuffer']), self.tot_time)
-            self.writer.add_scalar('Train/mean_episode_length/time', statistics.mean(locs['lenbuffer']), self.tot_time)
+            self.log_scalar('Train/mean_reward', statistics.mean(locs['rewbuffer']), locs['it'])
+            self.log_scalar('Train/mean_episode_length', statistics.mean(locs['lenbuffer']), locs['it'])
+            self.log_scalar('Train/mean_reward/time', statistics.mean(locs['rewbuffer']), self.tot_time)
+            self.log_scalar('Train/mean_episode_length/time', statistics.mean(locs['lenbuffer']), self.tot_time)
 
         str = f" \033[1m Learning iteration {locs['it']}/{self.current_learning_iteration + locs['num_learning_iterations']} \033[0m "
 
