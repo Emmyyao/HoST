@@ -208,6 +208,8 @@ class LeggedRobotCfgPPO(BaseConfig):
         save_interval = 500 # check for potential saves every this many iterations
         experiment_name = 'test'
         run_name = ''
+        logger = 'wandb'  # 改为 wandb，或者用 'tensorboard'
+        wandb_project = 'host-robot'  # 改成你的 WandB project 名称
         # load and resume
         resume = False
         load_run = -1 # -1 = last run
