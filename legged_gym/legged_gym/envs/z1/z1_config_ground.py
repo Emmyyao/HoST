@@ -117,12 +117,12 @@ class Z1Cfg( LeggedRobotCfg ):
     class asset( LeggedRobotCfg.asset ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/Z1/MagicBotZ1_23dof.urdf'
         name = "z1"
-        left_foot_name = "left_ankle_pitch"
-        right_foot_name = "right_ankle_pitch"
-        left_knee_name = 'left_knee'
-        right_knee_name = 'right_knee'
-        foot_name = "ankle_roll"
-        penalize_contacts_on = ["elbow", 'shoulder', 'waist', 'knee', 'hip']
+        left_foot_name = "left_ankle_roll_link"  # 修改：URDF中的实际link名称
+        right_foot_name = "right_ankle_roll_link"  # 修改：URDF中的实际link名称
+        left_knee_name = 'left_knee_link'  # 修改：添加_link后缀
+        right_knee_name = 'right_knee_link'  # 修改：添加_link后缀
+        foot_name = "ankle_roll_link"  # 修改：添加_link后缀
+        penalize_contacts_on = ["elbow_link", 'shoulder', 'knee_link', 'hip']  # 修改：移除不存在的waist，规范化link名称
         terminate_after_contacts_on = []
 
         left_shoulder_name = "left_shoulder"
@@ -149,19 +149,19 @@ class Z1Cfg( LeggedRobotCfg ):
         knee_joints = ['left_knee_joint', 'right_knee_joint']
         ankle_joints = ['left_ankle_pitch_joint', 'left_ankle_roll_joint', 'right_ankle_pitch_joint', 'right_ankle_roll_joint']
 
-        keyframe_name = "keyframe"
-        head_name = 'keyframe_head'
+        keyframe_name = "head_link"  # Z1 URDF中没有keyframe，使用head_link代替
+        head_name = 'head_link'  # 修改：URDF中的实际link名称
 
-        trunk_names = ["pelvis", "torso"]
+        trunk_names = ["pelvis", "torso_link"]  # 修改：torso改为torso_link
         base_name = 'torso_link'
 
-        left_upper_body_names = ['left_shoulder_pitch', 'left_elbow']
-        right_upper_body_names = ['right_shoulder_pitch', 'right_elbow']
-        left_lower_body_names = ['left_hip_pitch', 'left_ankle_roll', 'left_knee']
-        right_lower_body_names = ['right_hip_pitch', 'right_ankle_roll', 'right_knee']
+        left_upper_body_names = ['left_shoulder_pitch_link', 'left_elbow_link']  # 修改：添加_link后缀
+        right_upper_body_names = ['right_shoulder_pitch_link', 'right_elbow_link']  # 修改：添加_link后缀
+        left_lower_body_names = ['left_hip_pitch_link', 'left_ankle_roll_link', 'left_knee_link']  # 修改：添加_link后缀
+        right_lower_body_names = ['right_hip_pitch_link', 'right_ankle_roll_link', 'right_knee_link']  # 修改：添加_link后缀
 
-        left_ankle_names = ['left_ankle_roll']
-        right_ankle_names = ['right_ankle_roll']
+        left_ankle_names = ['left_ankle_roll_link']  # 修改：添加_link后缀
+        right_ankle_names = ['right_ankle_roll_link']  # 修改：添加_link后缀
 
         density = 0.001
         angular_damping = 0.01
