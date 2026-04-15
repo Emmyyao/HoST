@@ -95,6 +95,10 @@ class OnPolicyRunner:
     
     def log_scalar(self, name, value, step):
         """Log a scalar value to both TensorBoard and WandB if available"""
+        # Convert tensor to scalar
+        if isinstance(value, torch.Tensor):
+            value = value.item()
+        
         if self.logger_type == 'wandb' and self.wandb_run is not None:
             wandb.log({name: value}, step=int(step))
         if self.writer is not None:
