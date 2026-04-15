@@ -94,16 +94,16 @@ class OnPolicyRunner:
         _, _ = self.env.reset()
     
     def log_scalar(self, name, value, step):
-        """Log a scalar value to the configured logger (TensorBoard or WandB)"""
+        """Log a scalar value to both TensorBoard and WandB if available"""
         if self.logger_type == 'wandb' and self.wandb_run is not None:
             wandb.log({name: value}, step=int(step))
-        elif self.writer is not None:
+        if self.writer is not None:
             self.writer.add_scalar(name, value, step)
     
     def learn(self, num_learning_iterations, init_at_random_ep_len=False):
-        # initialize writer
-        if self.log_dir is not None and self.writer is None and self.wandb_run is None:
-            if self.logger_type == 'wandb':
+        # initialize writer(s)
+        if self.log_dir is not None:
+            if self.wandb_run is None and self.logger_type == 'wandb':
                 if WANDB_AVAILABLE:
                     self.wandb_run = wandb.init(
                         project=self.wandb_project,
@@ -112,9 +112,8 @@ class OnPolicyRunner:
                         sync_tensorboard=False
                     )
                 else:
-                    print("WARNING: wandb not installed, falling back to tensorboard")
-                    self.writer = SummaryWriter(log_dir=self.log_dir, flush_secs=10)
-            else:
+                    print("WARNING: wandb not installed")
+            if self.writer is None:
                 self.writer = SummaryWriter(log_dir=self.log_dir, flush_secs=10)
         if init_at_random_ep_len:
             self.env.episode_length_buf = torch.randint_like(self.env.episode_length_buf, high=int(self.env.max_episode_length))
