@@ -114,10 +114,26 @@ class Z1Cfg( LeggedRobotCfg ):
         self_collisions = 0 
         flip_visual_attachments = False
 
+        left_shoulder_name = "left_shoulder"
+        right_shoulder_name = "right_shoulder"
+
+        left_hip_joints = ['left_hip_yaw_joint']
+        right_hip_joints = ['right_hip_yaw_joint']
+        left_hip_roll_joints = ['left_hip_roll_joint']
+        right_hip_roll_joints = ['right_hip_roll_joint']    
+        left_hip_pitch_joints = ['left_hip_pitch_joint']
+        right_hip_pitch_joints = ['right_hip_pitch_joint']    
+
+        left_shoulder_roll_joints = ['left_shoulder_roll_joint']
+        right_shoulder_roll_joints = ['right_shoulder_roll_joint']    
+
         # 按照 Z1 的物理拓扑顺序重排：Pitch -> Roll -> Yaw
         left_leg_joints = ['left_hip_pitch_joint', 'left_hip_roll_joint', 'left_hip_yaw_joint', 'left_knee_joint', 'left_ankle_pitch_joint', 'left_ankle_roll_joint']
         right_leg_joints = ['right_hip_pitch_joint', 'right_hip_roll_joint', 'right_hip_yaw_joint', 'right_knee_joint', 'right_ankle_pitch_joint', 'right_ankle_roll_joint']
         
+        left_knee_joints = ['left_knee_joint']
+        right_knee_joints = ['right_knee_joint']    
+
         left_arm_joints = ['left_shoulder_pitch_joint', 'left_shoulder_roll_joint', 'left_shoulder_yaw_joint', 'left_elbow_joint', 'left_wrist_yaw_joint']
         right_arm_joints = ['right_shoulder_pitch_joint', 'right_shoulder_roll_joint', 'right_shoulder_yaw_joint', 'right_elbow_joint', 'right_wrist_yaw_joint']
         
@@ -125,10 +141,29 @@ class Z1Cfg( LeggedRobotCfg ):
         knee_joints = ['left_knee_joint', 'right_knee_joint']
         ankle_joints = [ 'left_ankle_pitch_joint', 'left_ankle_roll_joint', 'right_ankle_pitch_joint', 'right_ankle_roll_joint']
 
+        keyframe_name = "head_link"
+        head_name = 'head_link'
+
         # 核心修正：Z1 的 Base 是 pelvis，而非 torso [cite: 1, 60]
         trunk_names = ["pelvis", "torso_link"]
         base_name = 'pelvis' 
         tracking_body_names =  ['pelvis']
+
+        left_upper_body_names = ['left_shoulder_pitch', 'left_elbow']
+        right_upper_body_names = ['right_shoulder_pitch', 'right_elbow']
+        left_lower_body_names = ['left_hip_pitch', 'left_ankle_roll', 'left_knee']
+        right_lower_body_names = ['right_hip_pitch', 'right_ankle_roll', 'right_knee']
+
+        left_ankle_names = ['left_ankle_roll']
+        right_ankle_names = ['right_ankle_roll']
+
+        density = 0.001
+        angular_damping = 0.01
+        linear_damping = 0.01
+        max_angular_velocity = 1000.
+        max_linear_velocity = 1000.
+        armature = 0.01
+        thickness = 0.01
 
     class rewards( LeggedRobotCfg.rewards ):
         soft_dof_pos_limit = 0.9
