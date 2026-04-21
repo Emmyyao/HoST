@@ -100,7 +100,7 @@ class Z1Cfg( LeggedRobotCfg ):
         decimation = 4
 
     class asset( LeggedRobotCfg.asset ):
-        file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/z1/MagicBotZ1_23dof.urdf'
+        file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/Z1/MagicBotZ1_23dof.urdf'
         name = "z1"
         left_foot_name = "left_foot"
         right_foot_name = "right_foot"
