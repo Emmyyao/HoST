@@ -168,9 +168,22 @@ class Z1Cfg( LeggedRobotCfg ):
     class rewards( LeggedRobotCfg.rewards ):
         soft_dof_pos_limit = 0.9
         soft_dof_vel_limit = 0.9
-        # Z1 站立高度约 0.8m，这里设定目标高度为 0.8
         base_height_target = 0.8
         base_height_sigma = 0.25
+        
+        # --- 下面是必须补回来的关键奖励计算参数 ---
+        only_positive_rewards = False
+        is_gaussian = True
+        orientation_sigma = 1
+        target_head_height = 1
+        target_head_margin = 1
+        orientation_threshold = 0.99
+        left_foot_displacement_sigma = -2
+        right_foot_displacement_sigma = -2
+        target_dof_pos_sigma = -0.1
+        tracking_sigma = 0.25 
+        # ----------------------------------------
+
         target_base_height_phase1 = 0.45
         target_base_height_phase2 = 0.45
         target_base_height_phase3 = 0.70
@@ -182,7 +195,7 @@ class Z1Cfg( LeggedRobotCfg ):
         class scales:
             task_orientation = 1
             task_head_height = 1
-
+            
     class constraints( LeggedRobotCfg.rewards ):
         # 继承 G1 的约束逻辑
         is_gaussian = True
