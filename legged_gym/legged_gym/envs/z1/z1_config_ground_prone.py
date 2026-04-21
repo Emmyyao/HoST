@@ -1,115 +1,112 @@
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
-class Z1Cfg( LeggedRobotCfg ):
-    class init_state( LeggedRobotCfg.init_state ):
-        pos = [0.0, 0.0, 0.5] # x,y,z [m]
-        # [0, 1, 0, 1] 对应绕 Y 轴旋转 90 度，使机器人面朝下趴在地上
-        rot = [0.0, 1.0, 0.0, 1.0] # x,y,z,w [quat]
-        
-        # 严格对应 Z1 URDF 的 23 个自由度
+class Z1Cfg(LeggedRobotCfg):
+    class init_state(LeggedRobotCfg.init_state):
+        pos = [0.0, 0.0, 0.50]  # Z1初始高度
+        rot = [0.0, 1.0, 0, 1.0] # x,y,z,w [quat]
         target_joint_angles = { 
-           # 髋部顺序：Pitch -> Roll -> Yaw [cite: 8, 12, 16]
+           'left_hip_yaw_joint' : 0.,   
+           'left_hip_roll_joint' : 0.,               
            'left_hip_pitch_joint' : -0.1,         
-           'left_hip_roll_joint' : 0.0,               
-           'left_hip_yaw_joint' : 0.0,   
            'left_knee_joint' : 0.3,       
            'left_ankle_pitch_joint' : -0.2,     
-           'left_ankle_roll_joint' : 0.0,
-           
-           'right_hip_pitch_joint' : -0.1,                                       
-           'right_hip_roll_joint' : 0.0, 
-           'right_hip_yaw_joint' : 0.0, 
+           'left_ankle_roll_joint' : 0.,
+           'right_hip_yaw_joint' : 0., 
+           'right_hip_roll_joint' : 0., 
+           'right_hip_pitch_joint' : -0.1,                                      
            'right_knee_joint' : 0.3,                                             
            'right_ankle_pitch_joint': -0.2,                              
-           'right_ankle_roll_joint' : 0.0,     
-           
+           'right_ankle_roll_joint' : 0.,     
            'waist_yaw_joint' : 0.0, 
-           
            'left_shoulder_pitch_joint' : 0.0,
            'left_shoulder_roll_joint' : 0.3, 
            'left_shoulder_yaw_joint' : 0.0,
-           'left_elbow_joint' : 0.0,
-           'left_wrist_yaw_joint' : 0.0, # Z1 腕部为 yaw 轴 [cite: 80]
-           
-           'right_shoulder_pitch_joint' : 0.0,
+           'left_elbow_joint' : 0.,
+           'left_wrist_yaw_joint' : 0.,
+           'right_shoulder_pitch_joint' : 0.,
            'right_shoulder_roll_joint' : -0.3,
            'right_shoulder_yaw_joint' : 0.0,
-           'right_elbow_joint' : 0.0,
-           'right_wrist_yaw_joint' : 0.0,
+           'right_elbow_joint' : 0.,
+           'right_wrist_yaw_joint' : 0.,
         }
 
         default_joint_angles = { 
-           'left_hip_pitch_joint' : -0.1,         
-           'left_hip_roll_joint' : 0.0,               
-           'left_hip_yaw_joint' : 0.0,   
-           'left_knee_joint' : 0.3,       
-           'left_ankle_pitch_joint' : -0.2,     
-           'left_ankle_roll_joint' : 0.0,     
-           
-           'right_hip_pitch_joint' : -0.1,                                       
-           'right_hip_roll_joint' : 0.0, 
-           'right_hip_yaw_joint' : 0.0, 
-           'right_knee_joint' : 0.3,                                             
-           'right_ankle_pitch_joint': -0.2,                              
-           'right_ankle_roll_joint' : 0.0,       
-           
+           'left_hip_yaw_joint' : 0.,   
+           'left_hip_roll_joint' : 0.,               
+           'left_hip_pitch_joint' : -0.1,       
+           'left_knee_joint' : 0.3,  
+           'left_ankle_pitch_joint' : -0.2,    
+           'left_ankle_roll_joint' : 0.,     
+           'right_hip_yaw_joint' : 0., 
+           'right_hip_roll_joint' : 0., 
+           'right_hip_pitch_joint' : -0.1,                                      
+           'right_knee_joint' : 0.3,                                            
+           'right_ankle_pitch_joint': -0.2,                            
+           'right_ankle_roll_joint' : 0.,       
            'waist_yaw_joint' : 0.0, 
-           
-           'left_shoulder_pitch_joint' : 0.0,
+           'left_shoulder_pitch_joint' : 0.,
            'left_shoulder_roll_joint' : 0.0,
            'left_shoulder_yaw_joint' : 0.0,
            'left_elbow_joint' : 0.8,
-           'left_wrist_yaw_joint' : 0.0,    
-           
-           'right_shoulder_pitch_joint' : 0.0,
+           'left_wrist_yaw_joint' : 0.,
+           'right_shoulder_pitch_joint' : 0.,
            'right_shoulder_roll_joint' : 0.0,
            'right_shoulder_yaw_joint' : 0.0,
            'right_elbow_joint' : 0.8,
-           'right_wrist_yaw_joint' : 0.0,
+           'right_wrist_yaw_joint' : 0.,
         }
 
     class env(LeggedRobotCfg.env):
-        num_one_step_observations = 76 
-        num_actions = 23 # 修正为实际 DOF 数量
+        num_one_step_observations = 76
+        num_actions = 23
         num_dofs = 23
         num_actor_history = 6
         num_observations = num_actor_history * num_one_step_observations
         episode_length_s = 10 
         unactuated_timesteps = 30
 
-    class control( LeggedRobotCfg.control ):
+    class control(LeggedRobotCfg.control):
         control_type = 'P'
-        # 针对 Z1 更大的重量，适当提升了膝盖和髋部的刚度
-        stiffness = {'hip': 180,  # G1 原本为 150
-                     'knee': 240, # G1 原本为 200
-                     'ankle': 40,
-                     'shoulder': 100,
-                     'elbow': 100,
-                     'waist': 100,
-                     'wrist': 100,
-                     } 
-        damping = {  'hip': 5,
-                     'knee': 8,
-                     'ankle': 2,
-                     'shoulder': 4,
-                     'elbow': 4,
-                     'waist': 4,
-                     'wrist': 4,
-                     } 
-        action_scale = 1
+        stiffness = {'hip': 150, 'knee': 200, 'ankle': 40, 'shoulder': 100, 'elbow': 100, 'waist': 100, 'wrist': 100}
+        damping = {'hip': 4, 'knee': 6, 'ankle': 2, 'shoulder': 4, 'elbow': 4, 'waist': 4, 'wrist': 4}
+        action_scale = 0.5  # 保持 Z1 适配的动作缩放，增强训练早期的安全性
         decimation = 4
 
-    class asset( LeggedRobotCfg.asset ):
+    class terrain(LeggedRobotCfg.terrain):
+        mesh_type = 'plane'
+        horizontal_scale = 0.1 
+        vertical_scale = 0.005 
+        border_size = 25 
+        curriculum = True
+        static_friction = 0.8
+        dynamic_friction = 0.7
+        restitution = 0.3
+        measure_heights = True
+        measured_points_x = [-0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+        measured_points_y = [-0.5, -0.4, -0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5]
+        selected = False 
+        terrain_kwargs = None 
+        max_init_terrain_level = 5 
+        terrain_length = 8.
+        terrain_width = 8.
+        num_rows = 1 
+        num_cols = 20 
+        terrain_proportions = [1, 0., 0, 0, 0]
+        slope_treshold = 0.75 
+
+    class asset(LeggedRobotCfg.asset):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/Z1/MagicBotZ1_23dof.urdf'
         name = "z1"
-        left_foot_name = "left_foot"
-        right_foot_name = "right_foot"
-        left_knee_name = 'left_knee'
-        right_knee_name = 'right_knee'
-        left_thigh_name = 'left_hip_pitch'
-        right_thigh_name = 'right_hip_pitch'
-        foot_name = "foot"
-        penalize_contacts_on = ["elbow", 'shoulder', 'waist', 'knee', 'hip']
+        left_foot_name = "left_ankle_roll_link"
+        right_foot_name = "right_ankle_roll_link"
+        left_knee_name = 'left_knee_link'
+        right_knee_name = 'right_knee_link'
+        left_thigh_name = 'left_hip_pitch_link'
+        right_thigh_name = 'right_hip_pitch_link'
+        foot_name = "ankle_roll_link"
+        
+        # 移除了 G1 相关的腰部多 DoF link，保持与 Z1 URDF 一致
+        penalize_contacts_on = ["elbow_link", 'shoulder', 'torso_link', 'knee_link', 'hip']
         terminate_after_contacts_on = [] 
         self_collisions = 0 
         flip_visual_attachments = False
@@ -117,6 +114,8 @@ class Z1Cfg( LeggedRobotCfg ):
         left_shoulder_name = "left_shoulder"
         right_shoulder_name = "right_shoulder"
 
+        left_leg_joints = ['left_hip_yaw_joint', 'left_hip_roll_joint', 'left_hip_pitch_joint', 'left_knee_joint', 'left_ankle_pitch_joint', 'left_ankle_roll_joint']
+        right_leg_joints = ['right_hip_yaw_joint', 'right_hip_roll_joint', 'right_hip_pitch_joint', 'right_knee_joint', 'right_ankle_pitch_joint', 'right_ankle_roll_joint']
         left_hip_joints = ['left_hip_yaw_joint']
         right_hip_joints = ['right_hip_yaw_joint']
         left_hip_roll_joints = ['left_hip_roll_joint']
@@ -127,35 +126,29 @@ class Z1Cfg( LeggedRobotCfg ):
         left_shoulder_roll_joints = ['left_shoulder_roll_joint']
         right_shoulder_roll_joints = ['right_shoulder_roll_joint']    
 
-        # 按照 Z1 的物理拓扑顺序重排：Pitch -> Roll -> Yaw
-        left_leg_joints = ['left_hip_pitch_joint', 'left_hip_roll_joint', 'left_hip_yaw_joint', 'left_knee_joint', 'left_ankle_pitch_joint', 'left_ankle_roll_joint']
-        right_leg_joints = ['right_hip_pitch_joint', 'right_hip_roll_joint', 'right_hip_yaw_joint', 'right_knee_joint', 'right_ankle_pitch_joint', 'right_ankle_roll_joint']
-        
         left_knee_joints = ['left_knee_joint']
         right_knee_joints = ['right_knee_joint']    
 
         left_arm_joints = ['left_shoulder_pitch_joint', 'left_shoulder_roll_joint', 'left_shoulder_yaw_joint', 'left_elbow_joint', 'left_wrist_yaw_joint']
         right_arm_joints = ['right_shoulder_pitch_joint', 'right_shoulder_roll_joint', 'right_shoulder_yaw_joint', 'right_elbow_joint', 'right_wrist_yaw_joint']
-        
         waist_joints = ["waist_yaw_joint"]
         knee_joints = ['left_knee_joint', 'right_knee_joint']
-        ankle_joints = [ 'left_ankle_pitch_joint', 'left_ankle_roll_joint', 'right_ankle_pitch_joint', 'right_ankle_roll_joint']
+        ankle_joints = ['left_ankle_pitch_joint', 'left_ankle_roll_joint', 'right_ankle_pitch_joint', 'right_ankle_roll_joint']
 
-        keyframe_name = "head_link"
-        head_name = 'head_link'
+        keyframe_name = "head_link"  
+        head_name = 'head_link'  
 
-        # 核心修正：Z1 的 Base 是 pelvis，而非 torso [cite: 1, 60]
         trunk_names = ["pelvis", "torso_link"]
-        base_name = 'pelvis' 
-        tracking_body_names =  ['pelvis']
+        base_name = 'torso_link'
+        tracking_body_names = ['pelvis']
 
-        left_upper_body_names = ['left_shoulder_pitch', 'left_elbow']
-        right_upper_body_names = ['right_shoulder_pitch', 'right_elbow']
-        left_lower_body_names = ['left_hip_pitch', 'left_ankle_roll', 'left_knee']
-        right_lower_body_names = ['right_hip_pitch', 'right_ankle_roll', 'right_knee']
+        left_upper_body_names = ['left_shoulder_pitch_link', 'left_elbow_link']
+        right_upper_body_names = ['right_shoulder_pitch_link', 'right_elbow_link']
+        left_lower_body_names = ['left_hip_pitch_link', 'left_ankle_roll_link', 'left_knee_link']
+        right_lower_body_names = ['right_hip_pitch_link', 'right_ankle_roll_link', 'right_knee_link']
 
-        left_ankle_names = ['left_ankle_roll']
-        right_ankle_names = ['right_ankle_roll']
+        left_ankle_names = ['left_ankle_roll_link']
+        right_ankle_names = ['right_ankle_roll_link']
 
         density = 0.001
         angular_damping = 0.01
@@ -165,121 +158,156 @@ class Z1Cfg( LeggedRobotCfg ):
         armature = 0.01
         thickness = 0.01
 
-    class rewards( LeggedRobotCfg.rewards ):
+    class rewards(LeggedRobotCfg.rewards):
         soft_dof_pos_limit = 0.9
         soft_dof_vel_limit = 0.9
-        base_height_target = 0.8
+        base_height_target = 0.75
         base_height_sigma = 0.25
-        
-        # --- 下面是必须补回来的关键奖励计算参数 ---
-        only_positive_rewards = False
-        is_gaussian = True
+        tracking_dof_sigma = 0.25
+        only_positive_rewards = False 
         orientation_sigma = 1
+        is_gaussian = True
         target_head_height = 1
         target_head_margin = 1
+        # 还原 G1 的三阶段渐进式高度域，引导爬起策略
+        target_base_height_phase1 = 0.45 
+        target_base_height_phase2 = 0.45 
+        target_base_height_phase3 = 0.65 
         orientation_threshold = 0.99
         left_foot_displacement_sigma = -2
         right_foot_displacement_sigma = -2
         target_dof_pos_sigma = -0.1
         tracking_sigma = 0.25 
-        # ----------------------------------------
 
-        target_base_height_phase1 = 0.45
-        target_base_height_phase2 = 0.45
-        target_base_height_phase3 = 0.70
-        
         reward_groups = ['task', 'regu', 'style', 'target']
         num_reward_groups = len(reward_groups)
-        reward_group_weights = [1, 0.1, 1, 1]
+        reward_group_weights = [1, 0.1, 1, 1]  # 恢复 G1 的权重比例
 
         class scales:
             task_orientation = 1
             task_head_height = 1
-            
-    class constraints( LeggedRobotCfg.rewards ):
-        # 继承 G1 的约束逻辑
+
+    class constraints(LeggedRobotCfg.rewards):
         is_gaussian = True
-        target_base_height = 0.45
+        target_head_height = 1
+        target_head_margin = 1
+        orientation_height_threshold = 0.9
+        target_base_height = 0.45  # 初期约束目标与 phase1 对齐
+
+        left_foot_displacement_sigma = -2
+        right_foot_displacement_sigma = -2
+        hip_yaw_var_sigma = -2
+        target_dof_pos_sigma = -0.1
         post_task = False
         
         class scales:
+            # Regularization reward
             regu_dof_acc = -2.5e-7
             regu_action_rate = -0.01
             regu_smoothness = -0.01 
             regu_torques = -2.5e-6
             regu_joint_power = -2.5e-5
             regu_dof_vel = -1e-3
+            regu_joint_tracking_error = -0.00025
             regu_dof_pos_limits = -100.0
+            regu_dof_vel_limits = -1 
 
+            # Style reward - 还原 G1 中对下肢的关键位姿限制
             style_waist_deviation = -10
             style_hip_yaw_deviation = -10
             style_hip_roll_deviation = -10
             style_hip_pitch_deviation = -10
             style_shoulder_roll_deviation = -2.5
+            style_left_foot_displacement = 2.5
+            style_right_foot_displacement = 2.5
+            style_knee_deviation = -0.25
             style_thigh_ori = 10
             style_feet_distance = -10
+            style_style_ang_vel_xy = 25
 
+            # Post-task reward
             target_ang_vel_xy = 10
             target_lin_vel_xy = 10
+            target_feet_height_var = 2.5
+            target_target_upper_dof_pos = 10
+            target_lower_body_deviation = 10
             target_target_orientation = 10
             target_target_base_height = 10
 
-    class curriculum:
-        # 保留“上帝之手”拉力辅助初始化
-        pull_force = True
-        force = 100 
-        threshold_height = 0.9
-
-    class sim(LeggedRobotCfg.sim):
-        dt = 0.005
-        substeps = 1
-        up_axis = 1  # 1 is Z axis
-
-    class domain_rand( LeggedRobotCfg.domain_rand ):
+    class domain_rand(LeggedRobotCfg.domain_rand):
         use_random = True
-
         randomize_actuation_offset = use_random
         actuation_offset_range = [-0.05, 0.05]
-
         randomize_motor_strength = use_random
         motor_strength_range = [0.9, 1.1]
-
-        # 核心报错点：之前缺失了这两个参数
-        # 针对 Z1 更大的重量，这里的 payload_mass_range 可以适当拉大上限
         randomize_payload_mass = use_random
-        payload_mass_range = [-2, 8] 
-
+        payload_mass_range = [-2, 5]
         randomize_com_displacement = use_random
         com_displacement_range = [-0.03, 0.03]
-
         randomize_link_mass = use_random
         link_mass_range = [0.8, 1.2]
-        
         randomize_friction = use_random
         friction_range = [0.1, 1]
-        
         randomize_restitution = use_random
         restitution_range = [0.0, 1.0]
-        
         randomize_kp = use_random
-        kp_range = [0.85, 1.25]
-        
+        kp_range = [0.85, 1.15]
         randomize_kd = use_random
-        kd_range = [0.85, 1.25]
-        
+        kd_range = [0.85, 1.15]
         randomize_initial_joint_pos = True
         initial_joint_pos_scale = [0.9, 1.1]
         initial_joint_pos_offset = [-0.1, 0.1]
-        
         push_robots = False
         push_interval_s = 10
         max_push_vel_xy = 0.5
-
         delay = use_random
         max_delay_timesteps = 5
+    
+    class curriculum:
+        pull_force = True
+        force = 120  # 保留 Z1 适配的 120N 虚拟拉力
+        dof_vel_limit = 300
+        base_vel_limit = 20
+        threshold_height = 0.9 
+        no_orientation = True  # 与 G1 对齐，训练初期不过分强调朝向，有利于加快爬起动作的收敛
 
-class Z1CfgPPO( LeggedRobotCfgPPO ):
-    class runner( LeggedRobotCfgPPO.runner ):
+    class sim:
+        dt = 0.005
+        substeps = 1
+        gravity = [0., 0., -9.81]
+        up_axis = 1  
+
+        class physx:
+            num_threads = 10
+            solver_type = 1 
+            num_position_iterations = 8
+            num_velocity_iterations = 1
+            contact_offset = 0.01  
+            rest_offset = 0.0   
+            bounce_threshold_velocity = 0.5 
+            max_depenetration_velocity = 1.0
+            max_gpu_contact_pairs = 2**23 
+            default_buffer_size_multiplier = 5
+            contact_collection = 2 
+
+class Z1CfgPPO(LeggedRobotCfgPPO):
+    runner_class_name = 'OnPolicyRunner'
+    class policy:
+        init_noise_std = 0.8
+        actor_hidden_dims = [512, 256, 128]
+        critic_hidden_dims = [512, 256]
+    class algorithm(LeggedRobotCfgPPO.algorithm):
+        entropy_coef = 0.01
+        value_smoothness_coef = 0.1
+        smoothness_upper_bound = 1.0
+        smoothness_lower_bound = 0.1
+    
+    class runner(LeggedRobotCfgPPO.runner):
         run_name = ''
+        save_interval = 500 
         experiment_name = 'z1_ground_prone'
-        max_iterations = 12000
+        algorithm_class_name = 'PPO'
+        init_at_random_ep_len = True
+        max_iterations = 12000 
+        logger = 'wandb' 
+        wandb_project = 'HoST_MagicAtom_Z1'
