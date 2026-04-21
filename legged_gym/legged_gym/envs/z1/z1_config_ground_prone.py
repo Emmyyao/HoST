@@ -156,6 +156,7 @@ class Z1Cfg( LeggedRobotCfg ):
 
         trunk_names = ["pelvis", "torso_link"]  # 修改：torso改为torso_link
         base_name = 'torso_link'
+        tracking_body_names = ['pelvis']
 
         left_upper_body_names = ['left_shoulder_pitch_link', 'left_elbow_link']  # 修改：添加_link后缀
         right_upper_body_names = ['right_shoulder_pitch_link', 'right_elbow_link']  # 修改：添加_link后缀
