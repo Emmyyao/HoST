@@ -121,6 +121,8 @@ class Z1Cfg( LeggedRobotCfg ):
         right_foot_name = "right_ankle_roll_link"  # 修改：URDF中的实际link名称
         left_knee_name = 'left_knee_link'  # 修改：添加_link后缀
         right_knee_name = 'right_knee_link'  # 修改：添加_link后缀
+        left_thigh_name = 'left_hip_pitch_link'
+        right_thigh_name = 'right_hip_pitch_link'
         foot_name = "ankle_roll_link"  # 修改：添加_link后缀
         penalize_contacts_on = ["elbow_link", 'shoulder', 'knee_link', 'hip']  # 修改：移除不存在的waist，规范化link名称
         terminate_after_contacts_on = []
