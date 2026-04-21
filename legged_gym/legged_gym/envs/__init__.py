@@ -31,6 +31,9 @@ from legged_gym.envs.pi.pi_host_ground import LeggedRobot_Pi
 # 在其他 import 之后添加（约第 30 行）：
 from legged_gym.envs.z1.z1_config_ground import Z1Cfg as Z1CfgGround
 from legged_gym.envs.z1.z1_config_ground import Z1CfgPPO as Z1CfgPPOGround
+# 新增（俯卧）：
+from legged_gym.envs.z1.z1_config_ground_prone import Z1Cfg as Z1CfgGroundProne
+from legged_gym.envs.z1.z1_config_ground_prone import Z1CfgPPO as Z1CfgPPOGroundProne
 
 task_registry.register( "g1_ground", LeggedRobotGround, G1CfgGround(), G1CfgPPOGround())
 task_registry.register( "g1_platform", LeggedRobotPlatform, G1CfgPlatform(), G1CfgPPOPlatform())
@@ -42,3 +45,4 @@ task_registry.register( "pi_ground", LeggedRobot_Pi, PiCfgGround(), PiCfgPPOGrou
 
 # 在最后一行（task_registry.register）之后添加：
 task_registry.register( "z1_ground", LeggedRobotGround, Z1CfgGround(), Z1CfgPPOGround())
+task_registry.register( "z1_ground_prone", LeggedRobotGroundProne, Z1CfgGroundProne(), Z1CfgPPOGroundProne())
