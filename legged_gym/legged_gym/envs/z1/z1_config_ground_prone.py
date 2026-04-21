@@ -187,6 +187,49 @@ class Z1Cfg( LeggedRobotCfg ):
         substeps = 1
         up_axis = 1  # 1 is Z axis
 
+    class domain_rand( LeggedRobotCfg.domain_rand ):
+        use_random = True
+
+        randomize_actuation_offset = use_random
+        actuation_offset_range = [-0.05, 0.05]
+
+        randomize_motor_strength = use_random
+        motor_strength_range = [0.9, 1.1]
+
+        # 核心报错点：之前缺失了这两个参数
+        # 针对 Z1 更大的重量，这里的 payload_mass_range 可以适当拉大上限
+        randomize_payload_mass = use_random
+        payload_mass_range = [-2, 8] 
+
+        randomize_com_displacement = use_random
+        com_displacement_range = [-0.03, 0.03]
+
+        randomize_link_mass = use_random
+        link_mass_range = [0.8, 1.2]
+        
+        randomize_friction = use_random
+        friction_range = [0.1, 1]
+        
+        randomize_restitution = use_random
+        restitution_range = [0.0, 1.0]
+        
+        randomize_kp = use_random
+        kp_range = [0.85, 1.25]
+        
+        randomize_kd = use_random
+        kd_range = [0.85, 1.25]
+        
+        randomize_initial_joint_pos = True
+        initial_joint_pos_scale = [0.9, 1.1]
+        initial_joint_pos_offset = [-0.1, 0.1]
+        
+        push_robots = False
+        push_interval_s = 10
+        max_push_vel_xy = 0.5
+
+        delay = use_random
+        max_delay_timesteps = 5
+
 class Z1CfgPPO( LeggedRobotCfgPPO ):
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
