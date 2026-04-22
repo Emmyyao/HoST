@@ -67,7 +67,7 @@ class Z1Cfg(LeggedRobotCfg):
 
     class control(LeggedRobotCfg.control):
         control_type = 'P'
-        stiffness = {'hip': 200, 'knee': 250, 'ankle': 40, 'shoulder': 100, 'elbow': 100, 'waist': 100, 'wrist': 100}
+        stiffness = {'hip': 150, 'knee': 200, 'ankle': 40, 'shoulder': 100, 'elbow': 100, 'waist': 100, 'wrist': 100}
         damping = {'hip': 4, 'knee': 6, 'ankle': 2, 'shoulder': 4, 'elbow': 4, 'waist': 4, 'wrist': 4}
         action_scale = 1  # 让初期训练更激进
         decimation = 4
@@ -202,11 +202,11 @@ class Z1Cfg(LeggedRobotCfg):
         
         class scales:
             # Regularization reward
-            regu_dof_acc = -1.0e-7
-            regu_action_rate = -0.002
+            regu_dof_acc = -2.5e-7
+            regu_action_rate = -0.01
             regu_smoothness = -0.01 
-            regu_torques = -5.0e-7
-            regu_joint_power = -5.0e-6
+            regu_torques = -2.5e-6
+            regu_joint_power = -2.5e-5
             regu_dof_vel = -1e-3
             regu_joint_tracking_error = -0.00025
             regu_dof_pos_limits = -100.0
