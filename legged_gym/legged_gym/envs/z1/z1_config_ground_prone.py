@@ -67,9 +67,9 @@ class Z1Cfg(LeggedRobotCfg):
 
     class control(LeggedRobotCfg.control):
         control_type = 'P'
-        stiffness = {'hip': 150, 'knee': 200, 'ankle': 40, 'shoulder': 100, 'elbow': 100, 'waist': 100, 'wrist': 100}
+        stiffness = {'hip': 200, 'knee': 250, 'ankle': 40, 'shoulder': 100, 'elbow': 100, 'waist': 100, 'wrist': 100}
         damping = {'hip': 4, 'knee': 6, 'ankle': 2, 'shoulder': 4, 'elbow': 4, 'waist': 4, 'wrist': 4}
-        action_scale = 0.5  # 保持 Z1 适配的动作缩放，增强训练早期的安全性
+        action_scale = 1  # 让初期训练更激进
         decimation = 4
 
     class terrain(LeggedRobotCfg.terrain):
@@ -202,11 +202,11 @@ class Z1Cfg(LeggedRobotCfg):
         
         class scales:
             # Regularization reward
-            regu_dof_acc = -2.5e-7
-            regu_action_rate = -0.01
+            regu_dof_acc = -1.0e-7
+            regu_action_rate = -0.002
             regu_smoothness = -0.01 
-            regu_torques = -2.5e-6
-            regu_joint_power = -2.5e-5
+            regu_torques = -5.0e-7
+            regu_joint_power = -5.0e-6
             regu_dof_vel = -1e-3
             regu_joint_tracking_error = -0.00025
             regu_dof_pos_limits = -100.0
@@ -214,13 +214,13 @@ class Z1Cfg(LeggedRobotCfg):
 
             # Style reward - 还原 G1 中对下肢的关键位姿限制
             style_waist_deviation = -10
-            style_hip_yaw_deviation = -10
-            style_hip_roll_deviation = -10
-            style_hip_pitch_deviation = -10
+            style_hip_yaw_deviation = -2
+            style_hip_roll_deviation = -2
+            style_hip_pitch_deviation = -2
             style_shoulder_roll_deviation = -2.5
             style_left_foot_displacement = 2.5
             style_right_foot_displacement = 2.5
-            style_knee_deviation = -0.25
+            style_knee_deviation = -0.05
             style_thigh_ori = 10
             style_feet_distance = -10
             style_style_ang_vel_xy = 25
